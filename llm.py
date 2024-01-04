@@ -5,6 +5,7 @@ from langchain.vectorstores import Chroma
 from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 from langchain.prompts import ChatPromptTemplate
 from langchain.chat_models import ChatOllama
+from langchain_community.document_loaders import UnstructuredFileLoader
 
 ###1. LLM Model
 llm = ChatOllama(
@@ -46,8 +47,10 @@ def upload_file(file):
 
 def embed_file(file_path):
     splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
-    loader = PyPDFLoader(file_path)
-    docs = loader.load_and_split(text_splitter=splitter)
+    #loader = PyPDFLoader(file_path)
+    #docs = loader.load_and_split(text_splitter=splitter)
+    loader = UnstructuredFileLoader(file_path)    
+    docs  = loader.load()
     vectorstore = Chroma.from_documents(docs, embedding_model)
 
     retriever = vectorstore.as_retriever()
